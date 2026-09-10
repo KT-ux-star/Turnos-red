@@ -6,60 +6,42 @@ import { inicializarSocket } from './events/socket.js';
 import { errorHandler } from './middlewares/error.handler.js';
 import { AppError } from './errors/app.error.js';
 import medicosRoutes from './routes/medicos.routes.js';
-
 const app = express();
 const httpServer = http.createServer(app);
 const puerto = process.env.PORT || 3000;
-
 // Registrar rutas
 app.use('/turnos', turnosRoutes);
-
 app.use('/turnos', turnosRoutes);
 app.use('/medicos', medicosRoutes);
-
 app.use((_req, _res, next) => {
-  // ...
+    // ...
 });
-
 //Rutas de respaldo
 app.use((_req, _res, next) => {
-  next(
-    new AppError(
-      404,
-      'Ruta no encontrada',
-      'ROUTE_NOT_FOUND',
-      [],
-    ),
-  );
+    next(new AppError(404, 'Ruta no encontrada', 'ROUTE_NOT_FOUND', []));
 });
-
 // Middleware centralizado de errores
 app.use(errorHandler);
-
 // Inicializar Socket.IO
 inicializarSocket(httpServer);
-
 // Middlewares
 app.use(express.json());
-
 // Registrar rutas
 app.use('/turnos', turnosRoutes);
-
 // Inicializar Socket.IO
 inicializarSocket(httpServer);
-
 // Iniciar servidor HTTP
 httpServer.listen(puerto, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${puerto}`);
+    console.log(`🚀 Servidor corriendo en puerto ${puerto}`);
 });
-
 // Cargar datos de turnos al iniciar
 async function iniciar() {
-  try {
-    await turnosService.inicializarTurnos();
-  } catch (error) {
-    console.error('Error al cargar turnos:', error);
-  }
+    try {
+        await turnosService.inicializarTurnos();
+    }
+    catch (error) {
+        console.error('Error al cargar turnos:', error);
+    }
 }
-
 iniciar();
+//# sourceMappingURL=index.js.map
