@@ -9,25 +9,17 @@ import medicosRoutes from './routes/medicos.routes.js';
 const app = express();
 const httpServer = http.createServer(app);
 const puerto = process.env.PORT || 3000;
-// Registrar rutas
-app.use('/turnos', turnosRoutes);
+// Middlewares
+app.use(express.json());
+// Rutas
 app.use('/turnos', turnosRoutes);
 app.use('/medicos', medicosRoutes);
-app.use((_req, _res, next) => {
-    // ...
-});
-//Rutas de respaldo
+// Ruta de respaldo
 app.use((_req, _res, next) => {
     next(new AppError(404, 'Ruta no encontrada', 'ROUTE_NOT_FOUND', []));
 });
 // Middleware centralizado de errores
 app.use(errorHandler);
-// Inicializar Socket.IO
-inicializarSocket(httpServer);
-// Middlewares
-app.use(express.json());
-// Registrar rutas
-app.use('/turnos', turnosRoutes);
 // Inicializar Socket.IO
 inicializarSocket(httpServer);
 // Iniciar servidor HTTP
