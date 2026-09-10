@@ -209,3 +209,227 @@ ISC
 **Ahora copia TODO esto y agrégalo a tu `README.md`** (después de la sección de Instalación que ya copiaste).
 
 ¿Lo hiciste? 🔹
+
+#Actividad 2 - Mejoras implementadas#
+
+Arquitectura y manejo de errores
+
+La API utiliza un middleware centralizado para responder errores con un formato uniforme:
+
+{
+  "status": 400,
+  "message": "Error de validación en los datos ingresados",
+  "code": "VALIDATION_ERROR",
+  "details": []
+}
+
+Los códigos principales utilizados son 200, 201, 204, 400, 404 y 500.
+
+Recurso Médicos
+
+Método
+
+Endpoint
+
+Descripción
+
+GET
+
+/medicos
+
+Lista médicos
+
+GET
+
+/medicos/:id
+
+Obtiene un médico
+
+POST
+
+/medicos
+
+Crea un médico
+
+PUT
+
+/medicos/:id
+
+Actualiza un médico
+
+DELETE
+
+/medicos/:id
+
+Elimina un médico
+
+Validaciones con Zod
+
+Se validan los datos de Turnos y Médicos antes de llegar a los controladores. Se controla, entre otros aspectos:
+
+Documento como texto.
+
+Especialidades válidas: Clínica Médica, Pediatría, Odontología y Nutrición.
+
+Fechas con formato DD/MM/AAAA.
+
+Horas con formato HH:MM.
+
+IDs positivos.
+
+Datos obligatorios y actualizaciones vacías.
+
+Existencia del médico indicado mediante medicoId.
+
+Filtros disponibles
+
+Recurso
+
+Ejemplo
+
+Turnos por especialidad
+
+/turnos?especialidad=Pediatria
+
+Turnos por fecha
+
+/turnos?fecha=14/08/2026
+
+Turnos por médico
+
+/turnos?medicoId=2
+
+Médicos por especialidad
+
+/medicos?especialidad=Pediatria
+
+Médicos disponibles
+
+/medicos?disponible=true
+
+Pruebas con Postman
+
+La colección exportada se encuentra en:
+
+turnos-red.postman_collection.json
+
+Incluye variables para baseUrl, IDs dinámicos y URL del Mock Server; pruebas automáticas para respuestas 200, 201, 204, 400 y 404; y ejemplos guardados para el Mock Server.
+
+Uso de Inteligencia Artificial
+
+Tarea
+
+Herramienta
+
+Prompt o consulta
+
+Resultado utilizado
+
+Ajuste manual aplicado
+
+Middleware de errores
+
+Codex
+
+Consultas sobre errores estandarizados en Express
+
+Clase AppError y middleware de errores
+
+Se adaptaron nombres de archivos y formato solicitado
+
+CRUD de Médicos
+
+Codex
+
+Consulta sobre estructura por capas
+
+Modelos, rutas, servicios y controladores
+
+Se revisó la integración con Turnos
+
+Validaciones
+
+Codex
+
+Consulta sobre esquemas Zod
+
+Esquemas para Turnos y Médicos
+
+Se ajustaron especialidades, formatos e IDs
+
+Filtros
+
+Codex
+
+Consulta sobre query parameters
+
+Filtros por especialidad, fecha, médico y disponibilidad
+
+Se probaron manualmente en Postman
+
+Pruebas y Mock Server
+
+Codex
+
+Consulta sobre tests y ejemplos de Postman
+
+Scripts de tests y Mock Server
+
+Se verificaron respuestas y capturas manualmente
+
+##La IA ChatGPT/Mentor Virtual "Cris", se utilizó como apoyo para comprender, diseñar y revisar el código. La integración, ejecución de pruebas POSTMAN y verificación final fueron realizadas manualmente.
+
+##Prompt utilizado: Le envie el codigo actual de Por ejemplo: "src/index.ts" para que me diga que esta bien segun la consigna, y me devolvio el siguiente codigo:
+import express from 'express';
+import http from 'http';
+import turnosRoutes from './routes/turnos.routes.js';
+import * as turnosService from './services/turnos.services.js';
+import { inicializarSocket } from './events/socket.js';
+import { errorHandler } from './middlewares/error.handler.js';
+import { AppError } from './errors/app.error.js';
+import medicosRoutes from './routes/medicos.routes.js';
+
+const app = express();
+const httpServer = http.createServer(app);
+const puerto = process.env.PORT || 3000;
+
+// Middlewares
+app.use(express.json());
+
+// Rutas
+app.use('/turnos', turnosRoutes);
+app.use('/medicos', medicosRoutes);
+
+// Ruta de respaldo
+app.use((_req, _res, next) => {
+  next(
+    new AppError(
+      404,
+      'Ruta no encontrada',
+      'ROUTE_NOT_FOUND',
+      [],
+    ),
+  );
+});
+
+// Middleware centralizado de errores
+app.use(errorHandler);
+
+// Inicializar Socket.IO
+inicializarSocket(httpServer);
+
+// Iniciar servidor HTTP
+httpServer.listen(puerto, () => {
+  console.log(`🚀 Servidor corriendo en puerto ${puerto}`);
+});
+
+// Cargar datos de turnos al iniciar
+async function iniciar() {
+  try {
+    await turnosService.inicializarTurnos();
+  } catch (error) {
+    console.error('Error al cargar turnos:', error);
+  }
+}
+
+iniciar();
