@@ -1,6 +1,11 @@
 import { TurnoCrudo, Turno } from '../models/turnos.models.js';
+export interface FiltrosTurnos {
+    especialidad?: string;
+    fecha?: string;
+    medicoId?: number;
+}
 export declare function inicializarTurnos(): Promise<void>;
-export declare function obtenerTodos(): Turno[];
+export declare function obtenerTodos(filtros?: FiltrosTurnos): Turno[];
 export declare function obtenerPorId(id: number): Turno | undefined;
 export declare function crearTurno(turnoCrudo: TurnoCrudo): Turno | null;
 export declare function actualizarTurno(id: number, datosActualizados: Partial<TurnoCrudo>): Turno | null;

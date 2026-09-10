@@ -1,0 +1,1328 @@
+{
+  "info": {
+    "_postman_id": "35bc46e4-58be-43b8-bc41-3e0a1ba5444f",
+    "name": "TurnosRed API2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "57919682",
+    "_collection_link": "https://go.postman.co/collection/57919682-35bc46e4-58be-43b8-bc41-3e0a1ba5444f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Listar turnos",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 200', () => {\r",
+              "  pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe devolver un arreglo de turnos', () => {\r",
+              "  const respuesta = pm.response.json();\r",
+              "  pm.expect(respuesta).to.be.an('array');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/turnos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "turnos"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 Lista de turnos",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/turnos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "314"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"13a-Vocyo0RAQ/xsDpNZyxMfMJk5pDk\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:10:45 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n    {\n        \"id\": 102,\n        \"paciente\": \"Carlos Ruiz\",\n        \"documento\": \"31654210\",\n        \"especialidad\": \"Pediatría\",\n        \"fecha\": \"14/08/2026\",\n        \"hora\": \"10.00\",\n        \"confirmado\": true,\n        \"medicoId\": 1\n    },\n    {\n        \"id\": 103,\n        \"paciente\": \"María López\",\n        \"documento\": \"40123456\",\n        \"especialidad\": \"Odontología\",\n        \"fecha\": \"15/08/2026\",\n        \"hora\": \"14:30\",\n        \"confirmado\": false,\n        \"medicoId\": 2\n    }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Obtener turno por ID",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 200', () => {\r",
+              "  pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe devolver el turno solicitado', () => {\r",
+              "  const respuesta = pm.response.json();\r",
+              "\r",
+              "  pm.expect(respuesta).to.have.property(\r",
+              "    'id',\r",
+              "    Number(pm.collectionVariables.get('turnoId')),\r",
+              "  );\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/turnos/{{turnoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "turnos",
+            "{{turnoId}}"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 Turno encontrado",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/{{turnoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "{{turnoId}}"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "87"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"57-ZwtukjH3b427sRNcn7f/NurRXl0\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:11:05 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"status\": 404,\n    \"message\": \"Turno no encontrado\",\n    \"code\": \"RESOURCE_NOT_FOUND\",\n    \"details\": []\n}"
+        }
+      ]
+    },
+    {
+      "name": "Turno con ID inválido",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 400', () => {\r",
+              "  pm.response.to.have.status(400);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe devolver el error de validación estándar', () => {\r",
+              "  const respuesta = pm.response.json();\r",
+              "\r",
+              "  pm.expect(respuesta).to.have.property('status', 400);\r",
+              "  pm.expect(respuesta).to.have.property('code', 'VALIDATION_ERROR');\r",
+              "  pm.expect(respuesta.details).to.be.an('array').that.is.not.empty;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/turnos/abc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "turnos",
+            "abc"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "400 ID inválido",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "abc"
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "157"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"9d-2mSlU66IP6K/gjZrH8UOmjjn2dw\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:11:44 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"status\": 400,\n    \"message\": \"ID inválido\",\n    \"code\": \"VALIDATION_ERROR\",\n    \"details\": [\n        {\n            \"field\": \"id\",\n            \"message\": \"El identificador debe ser un número entero positivo\"\n        }\n    ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "Crear médico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 201', () => {\r",
+              "  pm.response.to.have.status(201);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe crear un médico válido', () => {\r",
+              "  const medico = pm.response.json();\r",
+              "\r",
+              "  pm.expect(medico).to.have.property('id');\r",
+              "  pm.expect(medico).to.have.property('nombre', 'Dra. Sofía Ramírez');\r",
+              "\r",
+              "  pm.collectionVariables.set('medicoId', String(medico.id));\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Dra. Sofía Ramírez\",\r\n  \"documento\": \"32567890\",\r\n  \"especialidad\": \"Odontología\",\r\n  \"disponible\": true\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/medicos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "medicos"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "201 Médico creado",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Dra. Sofía Ramírez\",\r\n  \"documento\": \"32567890\",\r\n  \"especialidad\": \"Odontología\",\r\n  \"disponible\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/medicos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicos"
+              ]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "111"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"6f-BWdWcQNyCpvwV9pAQSFQ/4b/jE4\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:18:41 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": 4,\n    \"nombre\": \"Dra. Sofía Ramírez\",\n    \"documento\": \"32567890\",\n    \"especialidad\": \"Odontología\",\n    \"disponible\": true\n}"
+        }
+      ]
+    },
+    {
+      "name": "Actualizar médico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 200', () => {\r",
+              "  pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe actualizar la disponibilidad', () => {\r",
+              "  const medico = pm.response.json();\r",
+              "\r",
+              "  pm.expect(medico).to.have.property(\r",
+              "    'id',\r",
+              "    Number(pm.collectionVariables.get('medicoId')),\r",
+              "  );\r",
+              "  pm.expect(medico).to.have.property('disponible', false);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"disponible\": false\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/medicos/{{medicoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "medicos",
+            "{{medicoId}}"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 Médico actualizado",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"disponible\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/medicos/{{medicoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicos",
+                "{{medicoId}}"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "112"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"70-cw+fQ6fFi9xnGJIh6GyY6JDCoM0\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:19:10 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": 4,\n    \"nombre\": \"Dra. Sofía Ramírez\",\n    \"documento\": \"32567890\",\n    \"especialidad\": \"Odontología\",\n    \"disponible\": false\n}"
+        }
+      ]
+    },
+    {
+      "name": "Médico inexistente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 404', () => {\r",
+              "  pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe devolver recurso no encontrado', () => {\r",
+              "  const respuesta = pm.response.json();\r",
+              "\r",
+              "  pm.expect(respuesta).to.have.property('status', 404);\r",
+              "  pm.expect(respuesta).to.have.property(\r",
+              "    'code',\r",
+              "    'RESOURCE_NOT_FOUND',\r",
+              "  );\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/medicos/99999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "medicos",
+            "99999"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "404 Médico no encontrado",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medicos/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicos",
+                "99999"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "89"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"59-kafej4CRgfyo4oKy3hOiPt0pO3U\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:19:31 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"status\": 404,\n    \"message\": \"Médico no encontrado\",\n    \"code\": \"RESOURCE_NOT_FOUND\",\n    \"details\": []\n}"
+        }
+      ]
+    },
+    {
+      "name": "Crear turno",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 201', () => {\r",
+              "  pm.response.to.have.status(201);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe crear un turno vinculado a un médico', () => {\r",
+              "  const turno = pm.response.json();\r",
+              "\r",
+              "  pm.expect(turno).to.have.property('id');\r",
+              "  pm.expect(turno).to.have.property(\r",
+              "    'medicoId',\r",
+              "    Number(pm.collectionVariables.get('medicoId')),\r",
+              "  );\r",
+              "\r",
+              "  pm.collectionVariables.set('turnoId', String(turno.id));\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id\": \"107\",\r\n  \"paciente\": \"Lucía Fernández\",\r\n  \"documento\": \"40234567\",\r\n  \"especialidad\": \"Odontología\",\r\n  \"fecha\": \"22/09/2026\",\r\n  \"hora\": \"11:00\",\r\n  \"confirmado\": true,\r\n  \"medicoId\": {{medicoId}},\r\n  \"observaciones\": \"Control odontológico\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/turnos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "turnos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar turno",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 200', () => {\r",
+              "  pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe actualizar el turno solicitado', () => {\r",
+              "  const turno = pm.response.json();\r",
+              "\r",
+              "  pm.expect(turno).to.have.property(\r",
+              "    'id',\r",
+              "    Number(pm.collectionVariables.get('turnoId')),\r",
+              "  );\r",
+              "  pm.expect(turno).to.have.property('confirmado', false);\r",
+              "  pm.expect(turno).to.have.property(\r",
+              "    'observaciones',\r",
+              "    'Consulta reprogramada',\r",
+              "  );\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"confirmado\": false,\r\n  \"observaciones\": \"Consulta reprogramada\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/turnos/{{turnoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "turnos",
+            "{{turnoId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar turno",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 204', () => {\r",
+              "  pm.response.to.have.status(204);\r",
+              "});\r",
+              "\r",
+              "pm.test('No debe devolver contenido', () => {\r",
+              "  pm.expect(pm.response.text()).to.eql('');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/turnos/{{turnoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "turnos",
+            "{{turnoId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Turno eliminado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 404', () => {\r",
+              "  pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe informar recurso no encontrado', () => {\r",
+              "  const respuesta = pm.response.json();\r",
+              "\r",
+              "  pm.expect(respuesta).to.have.property(\r",
+              "    'code',\r",
+              "    'RESOURCE_NOT_FOUND',\r",
+              "  );\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/turnos/{{turnoEliminadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "turnos",
+            "{{turnoEliminadoId}}"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "404 Turno no encontrado",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/{{turnoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "{{turnoId}}"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "87"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"57-ZwtukjH3b427sRNcn7f/NurRXl0\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:11:59 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"status\": 404,\n    \"message\": \"Turno no encontrado\",\n    \"code\": \"RESOURCE_NOT_FOUND\",\n    \"details\": []\n}"
+        }
+      ]
+    },
+    {
+      "name": "Listar médicos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 200', () => {\r",
+              "  pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe devolver un arreglo de médicos', () => {\r",
+              "  const respuesta = pm.response.json();\r",
+              "  pm.expect(respuesta).to.be.an('array');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/medicos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "medicos"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 Lista de médicos",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medicos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicos"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "448"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"1c0-bnufCUzC3FCZ7BjKENKaBrWtTA4\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:21:16 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n    {\n        \"id\": 1,\n        \"nombre\": \"Dra. Laura Gómez\",\n        \"documento\": \"28567890\",\n        \"especialidad\": \"Clínica Médica\",\n        \"disponible\": true\n    },\n    {\n        \"id\": 2,\n        \"nombre\": \"Dr. Martín Pérez\",\n        \"documento\": \"30123456\",\n        \"especialidad\": \"Pediatría\",\n        \"disponible\": true\n    },\n    {\n        \"id\": 3,\n        \"nombre\": \"Dra. Sofía Ramírez\",\n        \"documento\": \"32567890\",\n        \"especialidad\": \"Odontología\",\n        \"disponible\": false\n    },\n    {\n        \"id\": 4,\n        \"nombre\": \"Dra. Sofía Ramírez\",\n        \"documento\": \"32567890\",\n        \"especialidad\": \"Odontología\",\n        \"disponible\": false\n    }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Obtener médico por ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 200', () => {\r",
+              "  pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe devolver el médico solicitado', () => {\r",
+              "  const medico = pm.response.json();\r",
+              "\r",
+              "  pm.expect(medico).to.have.property(\r",
+              "    'id',\r",
+              "    Number(pm.collectionVariables.get('medicoId')),\r",
+              "  );\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/medicos/{{medicoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "medicos",
+            "{{medicoId}}"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 Médico encontrado",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medicos/{{medicoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicos",
+                "{{medicoId}}"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "112"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"70-cw+fQ6fFi9xnGJIh6GyY6JDCoM0\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:23:31 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"id\": 4,\n    \"nombre\": \"Dra. Sofía Ramírez\",\n    \"documento\": \"32567890\",\n    \"especialidad\": \"Odontología\",\n    \"disponible\": false\n}"
+        }
+      ]
+    },
+    {
+      "name": "Eliminar médico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 204', () => {\r",
+              "  pm.response.to.have.status(204);\r",
+              "});\r",
+              "\r",
+              "pm.test('No debe devolver contenido', () => {\r",
+              "  pm.expect(pm.response.text()).to.eql('');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/medicos/{{medicoEliminadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "medicos",
+            "{{medicoEliminadoId}}"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "204 Médico eliminado",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medicos/{{medicoEliminadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicos",
+                "{{medicoEliminadoId}}"
+              ]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:27:55 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": null
+        }
+      ]
+    },
+    {
+      "name": "Médico eliminado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Debe responder 404', () => {\r",
+              "  pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test('Debe devolver recurso no encontrado', () => {\r",
+              "  const respuesta = pm.response.json();\r",
+              "\r",
+              "  pm.expect(respuesta).to.have.property('status', 404);\r",
+              "  pm.expect(respuesta).to.have.property(\r",
+              "    'code',\r",
+              "    'RESOURCE_NOT_FOUND',\r",
+              "  );\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/medicos/{{medicoEliminadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "medicos",
+            "{{medicoEliminadoId}}"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "404 Médico eliminado no encontrado",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medicos/{{medicoEliminadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicos",
+                "{{medicoEliminadoId}}"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "89"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"59-kafej4CRgfyo4oKy3hOiPt0pO3U\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 10 Sep 2026 22:29:26 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"status\": 404,\n    \"message\": \"Médico no encontrado\",\n    \"code\": \"RESOURCE_NOT_FOUND\",\n    \"details\": []\n}"
+        }
+      ]
+    },
+    {
+      "name": "Mock - Listar turnos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El Mock Server debe responder 200', () => {\r",
+              "  pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test('El Mock Server debe devolver un arreglo', () => {\r",
+              "  const respuesta = pm.response.json();\r",
+              "  pm.expect(respuesta).to.be.an('array');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{postmanApiKey}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{mockUrl}}/turnos",
+          "host": [
+            "{{mockUrl}}"
+          ],
+          "path": [
+            "turnos"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "turnoId",
+      "value": "102"
+    },
+    {
+      "key": "medicoId",
+      "value": "1"
+    },
+    {
+      "key": "turnoEliminadoId",
+      "value": "107"
+    },
+    {
+      "key": "medicoEliminadoId",
+      "value": "3"
+    },
+    {
+      "key": "mockUrl",
+      "value": "https://862ca96a-06e9-4afb-992b-0883c1251637.mock.pstmn.io"
+    },
+    {
+      "key": "postmanApiKey",
+      "secret": true
+    }
+  ]
+}

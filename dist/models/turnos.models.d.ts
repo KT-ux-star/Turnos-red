@@ -1,11 +1,13 @@
 export interface TurnoCrudo {
-    id: string;
+    id: string | number;
     paciente: string;
-    documento: number;
+    documento: string | number;
     especialidad: string;
     fecha: string;
     hora: string;
-    confirmado: string;
+    confirmado: string | boolean;
+    medicoId?: number;
+    observaciones?: string;
 }
 export interface Turno {
     id: number;
@@ -15,6 +17,7 @@ export interface Turno {
     fecha: string;
     hora: string;
     confirmado: boolean;
+    medicoId?: number;
     observaciones?: string;
 }
 export declare function normalizarTurno(crudo: TurnoCrudo): Turno | null;

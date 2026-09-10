@@ -25,8 +25,21 @@ export async function inicializarTurnos() {
         throw error;
     }
 }
-export function obtenerTodos() {
-    return turnosEnMemoria;
+export function obtenerTodos(filtros = {}) {
+    const normalizarTexto = (valor) => valor
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    return turnosEnMemoria.filter((turno) => {
+        const coincideEspecialidad = !filtros.especialidad ||
+            normalizarTexto(turno.especialidad) ===
+                normalizarTexto(filtros.especialidad);
+        const coincideFecha = !filtros.fecha || turno.fecha === filtros.fecha;
+        const coincideMedico = filtros.medicoId === undefined ||
+            turno.medicoId === filtros.medicoId;
+        return coincideEspecialidad && coincideFecha && coincideMedico;
+    });
 }
 export function obtenerPorId(id) {
     return turnosEnMemoria.find(turno => turno.id === id);

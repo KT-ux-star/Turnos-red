@@ -2,11 +2,42 @@ import type { NextFunction, Request, Response } from 'express';
 import { AppError } from '../errors/app.error.js';
 import * as turnosService from '../services/turnos.services.js';
 import { TurnoCrudo, Turno } from '../models/turnos.models.js';
-export function obtenerTodos(_req: Request, res: Response): void {
-  const turnos = turnosService.obtenerTodos();
+import * as medicosService from '../services/medicos.service.js';
+
+export function obtenerTodos(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const { especialidad, fecha, medicoId } = req.query;
+
+  let medicoIdNumero: number | undefined;
+
+  if (medicoId !== undefined) {
+    medicoIdNumero = Number(medicoId);
+
+    if (!Number.isInteger(medicoIdNumero) || medicoIdNumero <= 0) {
+      next(
+        new AppError(400, 'medicoId inválido', 'VALIDATION_ERROR', [
+          {
+            field: 'medicoId',
+            message: 'Debe ser un número entero positivo',
+          },
+        ]),
+      );
+      return;
+    }
+  }
+
+  const turnos = turnosService.obtenerTodos({
+    especialidad:
+      typeof especialidad === 'string' ? especialidad : undefined,
+    fecha: typeof fecha === 'string' ? fecha : undefined,
+    medicoId: medicoIdNumero,
+  });
+
   res.status(200).json(turnos);
 }
-
 export function obtenerPorId(
   req: Request,
   res: Response,
@@ -45,6 +76,31 @@ export function crearTurno(
   next: NextFunction,
 ): void {
   const turnoCrudo: TurnoCrudo = req.body;
+  if (turnoCrudo.medicoId === undefined) {
+  next(
+    new AppError(400, 'medicoId es obligatorio', 'VALIDATION_ERROR', [
+      {
+        field: 'medicoId',
+        message: 'Debe indicar un médico para el turno',
+      },
+    ]),
+  );
+  return;
+}
+
+const medico = medicosService.obtenerPorId(turnoCrudo.medicoId);
+
+if (!medico) {
+  next(
+    new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', [
+      {
+        field: 'medicoId',
+        message: 'No existe un médico con el ID indicado',
+      },
+    ]),
+  );
+  return;
+}
   const turno = turnosService.crearTurno(turnoCrudo);
 
   if (!turno) {
@@ -92,6 +148,21 @@ export function actualizarTurno(
   }
 
   const datosActualizados: Partial<TurnoCrudo> = req.body;
+  if (datosActualizados.medicoId !== undefined) {
+  const medico = medicosService.obtenerPorId(datosActualizados.medicoId);
+
+  if (!medico) {
+    next(
+      new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', [
+        {
+          field: 'medicoId',
+          message: 'No existe un médico con el ID indicado',
+        },
+      ]),
+    );
+    return;
+  }
+}
   const turno = turnosService.actualizarTurno(id, datosActualizados);
 
   if (!turno) {

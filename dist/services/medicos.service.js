@@ -14,8 +14,20 @@ let medicos = [
         disponible: true,
     },
 ];
-export function obtenerTodos() {
-    return medicos;
+export function obtenerTodos(filtros = {}) {
+    const normalizarTexto = (valor) => valor
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    return medicos.filter((medico) => {
+        const coincideEspecialidad = !filtros.especialidad ||
+            normalizarTexto(medico.especialidad) ===
+                normalizarTexto(filtros.especialidad);
+        const coincideDisponibilidad = filtros.disponible === undefined ||
+            medico.disponible === filtros.disponible;
+        return coincideEspecialidad && coincideDisponibilidad;
+    });
 }
 export function obtenerPorId(id) {
     return medicos.find((medico) => medico.id === id);

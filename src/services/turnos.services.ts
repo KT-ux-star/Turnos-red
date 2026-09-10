@@ -3,6 +3,12 @@ import { emitirTurnoCreado, emitirTurnoActualizado, emitirTurnoEliminado } from 
 
 let turnosEnMemoria: Turno[] = [];
 
+export interface FiltrosTurnos {
+  especialidad?: string;
+  fecha?: string;
+  medicoId?: number;
+}
+
 // Inicializar: leer y normalizar turnos del archivo
 export async function inicializarTurnos(): Promise<void> {
   try {
@@ -30,10 +36,29 @@ export async function inicializarTurnos(): Promise<void> {
 }
 
 
-export function obtenerTodos(): Turno[] {
-  return turnosEnMemoria;
-}
+export function obtenerTodos(filtros: FiltrosTurnos = {}): Turno[] {
+  const normalizarTexto = (valor: string): string =>
+    valor
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
 
+  return turnosEnMemoria.filter((turno) => {
+    const coincideEspecialidad =
+      !filtros.especialidad ||
+      normalizarTexto(turno.especialidad) ===
+        normalizarTexto(filtros.especialidad);
+
+    const coincideFecha = !filtros.fecha || turno.fecha === filtros.fecha;
+
+    const coincideMedico =
+      filtros.medicoId === undefined ||
+      turno.medicoId === filtros.medicoId;
+
+    return coincideEspecialidad && coincideFecha && coincideMedico;
+  });
+}
 
 export function obtenerPorId(id: number): Turno | undefined {
   return turnosEnMemoria.find(turno => turno.id === id);

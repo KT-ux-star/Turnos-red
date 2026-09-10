@@ -3,8 +3,37 @@ import { AppError } from '../errors/app.error.js';
 import type { Medico } from '../models/medicos.models.js';
 import * as medicosService from '../services/medicos.service.js';
 
-export function obtenerTodos(_req: Request, res: Response): void {
-  const medicos = medicosService.obtenerTodos();
+export function obtenerTodos(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const { especialidad, disponible } = req.query;
+
+  let disponibleBooleano: boolean | undefined;
+
+  if (disponible !== undefined) {
+    if (disponible !== 'true' && disponible !== 'false') {
+      next(
+        new AppError(400, 'disponible inválido', 'VALIDATION_ERROR', [
+          {
+            field: 'disponible',
+            message: 'Debe ser true o false',
+          },
+        ]),
+      );
+      return;
+    }
+
+    disponibleBooleano = disponible === 'true';
+  }
+
+  const medicos = medicosService.obtenerTodos({
+    especialidad:
+      typeof especialidad === 'string' ? especialidad : undefined,
+    disponible: disponibleBooleano,
+  });
+
   res.status(200).json(medicos);
 }
 

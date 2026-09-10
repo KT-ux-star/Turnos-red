@@ -1,7 +1,26 @@
 import { AppError } from '../errors/app.error.js';
 import * as turnosService from '../services/turnos.services.js';
-export function obtenerTodos(_req, res) {
-    const turnos = turnosService.obtenerTodos();
+import * as medicosService from '../services/medicos.service.js';
+export function obtenerTodos(req, res, next) {
+    const { especialidad, fecha, medicoId } = req.query;
+    let medicoIdNumero;
+    if (medicoId !== undefined) {
+        medicoIdNumero = Number(medicoId);
+        if (!Number.isInteger(medicoIdNumero) || medicoIdNumero <= 0) {
+            next(new AppError(400, 'medicoId inválido', 'VALIDATION_ERROR', [
+                {
+                    field: 'medicoId',
+                    message: 'Debe ser un número entero positivo',
+                },
+            ]));
+            return;
+        }
+    }
+    const turnos = turnosService.obtenerTodos({
+        especialidad: typeof especialidad === 'string' ? especialidad : undefined,
+        fecha: typeof fecha === 'string' ? fecha : undefined,
+        medicoId: medicoIdNumero,
+    });
     res.status(200).json(turnos);
 }
 export function obtenerPorId(req, res, next) {
@@ -24,6 +43,25 @@ export function obtenerPorId(req, res, next) {
 }
 export function crearTurno(req, res, next) {
     const turnoCrudo = req.body;
+    if (turnoCrudo.medicoId === undefined) {
+        next(new AppError(400, 'medicoId es obligatorio', 'VALIDATION_ERROR', [
+            {
+                field: 'medicoId',
+                message: 'Debe indicar un médico para el turno',
+            },
+        ]));
+        return;
+    }
+    const medico = medicosService.obtenerPorId(turnoCrudo.medicoId);
+    if (!medico) {
+        next(new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', [
+            {
+                field: 'medicoId',
+                message: 'No existe un médico con el ID indicado',
+            },
+        ]));
+        return;
+    }
     const turno = turnosService.crearTurno(turnoCrudo);
     if (!turno) {
         next(new AppError(400, 'No se pudo crear el turno. Los datos son inválidos', 'VALIDATION_ERROR', []));
@@ -48,6 +86,18 @@ export function actualizarTurno(req, res, next) {
         return;
     }
     const datosActualizados = req.body;
+    if (datosActualizados.medicoId !== undefined) {
+        const medico = medicosService.obtenerPorId(datosActualizados.medicoId);
+        if (!medico) {
+            next(new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', [
+                {
+                    field: 'medicoId',
+                    message: 'No existe un médico con el ID indicado',
+                },
+            ]));
+            return;
+        }
+    }
     const turno = turnosService.actualizarTurno(id, datosActualizados);
     if (!turno) {
         next(new AppError(400, 'No se pudo actualizar el turno. Los datos son inválidos', 'VALIDATION_ERROR', []));

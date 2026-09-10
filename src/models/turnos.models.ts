@@ -2,13 +2,15 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 export interface TurnoCrudo {
-  id: string;
+  id: string | number;
   paciente: string;
-  documento: number;
+  documento: string | number;
   especialidad: string;
   fecha: string;
   hora: string;
-  confirmado: string;
+  confirmado: string | boolean;
+  medicoId?: number;
+  observaciones?: string;
 }
 
 export interface Turno {
@@ -19,32 +21,52 @@ export interface Turno {
   fecha: string;
   hora: string;
   confirmado: boolean;
-  observaciones?: string; // propiedad opcional
+  medicoId?: number;
+  observaciones?: string;
 }
 
 export function normalizarTurno(crudo: TurnoCrudo): Turno | null {
-  console.log('🔍 Normalizando turno:', crudo);  // ← NUEVA LÍNEA
   try {
     const id = Number(crudo.id);
+
     if (!Number.isInteger(id) || id <= 0) {
-      console.log('❌ ID inválido:', id);  // ← NUEVA LÍNEA
       return null;
     }
 
+    const paciente = crudo.paciente.trim();
+    const documento = String(crudo.documento).trim();
+
+    if (!paciente || !documento) {
+      return null;
+    }
+
+    if (
+      crudo.medicoId !== undefined &&
+      (!Number.isInteger(crudo.medicoId) || crudo.medicoId <= 0)
+    ) {
+      return null;
+    }
+
+    const confirmado =
+      typeof crudo.confirmado === 'boolean'
+        ? crudo.confirmado
+        : crudo.confirmado.toLowerCase() === 'si';
+
     return {
       id,
-      paciente: (crudo.paciente as string).trim(), // Sanitizar espacios
-      documento: String(crudo.documento), // De number a string
+      paciente,
+      documento,
       especialidad: crudo.especialidad
-      .toLowerCase()
-      .split(' ')
-      .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
-      .join(' '),
+        .toLowerCase()
+        .split(' ')
+        .map((palabra) => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+        .join(' '),
       fecha: crudo.fecha,
       hora: crudo.hora,
-      confirmado: crudo.confirmado.toLowerCase() === 'si', // "si"/"no" a boolean
+      confirmado,
+      medicoId: crudo.medicoId,
+      observaciones: crudo.observaciones?.trim(),
     };
-
   } catch (error) {
     console.error('Error al normalizar turno:', error);
     return null;

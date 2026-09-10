@@ -17,8 +17,31 @@ let medicos: Medico[] = [
   },
 ];
 
-export function obtenerTodos(): Medico[] {
-  return medicos;
+export interface FiltrosMedicos {
+  especialidad?: string;
+  disponible?: boolean;
+} 
+
+export function obtenerTodos(filtros: FiltrosMedicos = {}): Medico[] {
+  const normalizarTexto = (valor: string): string =>
+    valor
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+
+  return medicos.filter((medico) => {
+    const coincideEspecialidad =
+      !filtros.especialidad ||
+      normalizarTexto(medico.especialidad) ===
+        normalizarTexto(filtros.especialidad);
+
+    const coincideDisponibilidad =
+      filtros.disponible === undefined ||
+      medico.disponible === filtros.disponible;
+
+    return coincideEspecialidad && coincideDisponibilidad;
+  });
 }
 
 export function obtenerPorId(id: number): Medico | undefined {

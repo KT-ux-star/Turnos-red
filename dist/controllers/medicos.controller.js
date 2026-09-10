@@ -1,7 +1,24 @@
 import { AppError } from '../errors/app.error.js';
 import * as medicosService from '../services/medicos.service.js';
-export function obtenerTodos(_req, res) {
-    const medicos = medicosService.obtenerTodos();
+export function obtenerTodos(req, res, next) {
+    const { especialidad, disponible } = req.query;
+    let disponibleBooleano;
+    if (disponible !== undefined) {
+        if (disponible !== 'true' && disponible !== 'false') {
+            next(new AppError(400, 'disponible inválido', 'VALIDATION_ERROR', [
+                {
+                    field: 'disponible',
+                    message: 'Debe ser true o false',
+                },
+            ]));
+            return;
+        }
+        disponibleBooleano = disponible === 'true';
+    }
+    const medicos = medicosService.obtenerTodos({
+        especialidad: typeof especialidad === 'string' ? especialidad : undefined,
+        disponible: disponibleBooleano,
+    });
     res.status(200).json(medicos);
 }
 export function obtenerPorId(req, res, next) {
