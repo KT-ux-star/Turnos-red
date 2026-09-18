@@ -1,212 +1,241 @@
 import type { NextFunction, Request, Response } from 'express';
 import { AppError } from '../errors/app.error.js';
 import * as turnosService from '../services/turnos.services.js';
-import { TurnoCrudo, Turno } from '../models/turnos.models.js';
-import * as medicosService from '../services/medicos.service.js';
 
-export function obtenerTodos(
+export async function obtenerTodos(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const { especialidad, fecha, medicoId } = req.query;
+): Promise<void> {
+  let status = 200;
 
-  let medicoIdNumero: number | undefined;
+  try {
+    const { especialidad, fecha, medicoId } = req.query;
 
-  if (medicoId !== undefined) {
-    medicoIdNumero = Number(medicoId);
+    let medicoIdNumero: number | undefined;
 
-    if (!Number.isInteger(medicoIdNumero) || medicoIdNumero <= 0) {
-      next(
-        new AppError(400, 'medicoId inválido', 'VALIDATION_ERROR', [
-          {
-            field: 'medicoId',
-            message: 'Debe ser un número entero positivo',
-          },
-        ]),
-      );
-      return;
+    if (medicoId !== undefined) {
+      medicoIdNumero = Number(medicoId);
+
+      if (!Number.isInteger(medicoIdNumero) || medicoIdNumero <= 0) {
+        status = 400;
+
+        throw new AppError(
+          status,
+          'medicoId inválido',
+          'VALIDATION_ERROR',
+          [
+            {
+              field: 'medicoId',
+              message: 'Debe ser un número entero positivo',
+            },
+          ],
+        );
+      }
     }
+
+    const turnos = turnosService.obtenerTodos({
+      especialidad:
+        typeof especialidad === 'string' ? especialidad : undefined,
+      fecha: typeof fecha === 'string' ? fecha : undefined,
+      medicoId: medicoIdNumero,
+    });
+
+    return void res.status(status).json(turnos);
+  } catch (error) {
+    next(error);
   }
-
-  const turnos = turnosService.obtenerTodos({
-    especialidad:
-      typeof especialidad === 'string' ? especialidad : undefined,
-    fecha: typeof fecha === 'string' ? fecha : undefined,
-    medicoId: medicoIdNumero,
-  });
-
-  res.status(200).json(turnos);
 }
-export function obtenerPorId(
+
+export async function obtenerPorId(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const id = Number(req.params.id);
+): Promise<void> {
+  let status = 200;
 
-  if (!Number.isInteger(id) || id <= 0) {
-    next(
-      new AppError(400, 'ID inválido', 'VALIDATION_ERROR', [
-        {
-          field: 'id',
-          message: 'El identificador debe ser un número entero positivo',
-        },
-      ]),
-    );
-    return;
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'ID inválido',
+        'VALIDATION_ERROR',
+        [
+          {
+            field: 'id',
+            message: 'El identificador debe ser un número entero positivo',
+          },
+        ],
+      );
+    }
+
+    const turno = turnosService.obtenerPorId(id);
+
+    if (!turno) {
+      status = 404;
+
+      throw new AppError(
+        status,
+        'Turno no encontrado',
+        'RESOURCE_NOT_FOUND',
+        [],
+      );
+    }
+
+    return void res.status(status).json(turno);
+  } catch (error) {
+    next(error);
   }
-
-  const turno = turnosService.obtenerPorId(id);
-
-  if (!turno) {
-    next(
-      new AppError(404, 'Turno no encontrado', 'RESOURCE_NOT_FOUND', []),
-    );
-    return;
-  }
-
-  res.status(200).json(turno);
 }
 
-
-export function crearTurno(
+export async function crearTurno(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const turnoCrudo: TurnoCrudo = req.body;
-  if (turnoCrudo.medicoId === undefined) {
-  next(
-    new AppError(400, 'medicoId es obligatorio', 'VALIDATION_ERROR', [
-      {
-        field: 'medicoId',
-        message: 'Debe indicar un médico para el turno',
-      },
-    ]),
-  );
-  return;
-}
+): Promise<void> {
+  let status = 201;
 
-const medico = medicosService.obtenerPorId(turnoCrudo.medicoId);
+  try {
+    const datos = req.body;
 
-if (!medico) {
-  next(
-    new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', [
-      {
-        field: 'medicoId',
-        message: 'No existe un médico con el ID indicado',
-      },
-    ]),
-  );
-  return;
-}
-  const turno = turnosService.crearTurno(turnoCrudo);
+    const turno = turnosService.crearTurno(datos);
 
-  if (!turno) {
-    next(
-      new AppError(
-        400,
+    if (!turno) {
+      status = 400;
+
+      throw new AppError(
+        status,
         'No se pudo crear el turno. Los datos son inválidos',
         'VALIDATION_ERROR',
         [],
-      ),
-    );
-    return;
-  }
+      );
+    }
 
-  res.status(201).json(turno);
+    return void res.status(status).json(turno);
+  } catch (error) {
+    next(error);
+  }
 }
 
 
-export function actualizarTurno(
+export async function actualizarTurno(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const id = Number(req.params.id);
+): Promise<void> {
+  let status = 200;
 
-  if (!Number.isInteger(id) || id <= 0) {
-    next(
-      new AppError(400, 'ID inválido', 'VALIDATION_ERROR', [
-        {
-          field: 'id',
-          message: 'El identificador debe ser un número entero positivo',
-        },
-      ]),
-    );
-    return;
-  }
+  try {
+    const id = Number(req.params.id);
 
-  const turnoExistente = turnosService.obtenerPorId(id);
+    if (!Number.isInteger(id) || id <= 0) {
+      status = 400;
 
-  if (!turnoExistente) {
-    next(
-      new AppError(404, 'Turno no encontrado', 'RESOURCE_NOT_FOUND', []),
-    );
-    return;
-  }
+      throw new AppError(
+        status,
+        'ID inválido',
+        'VALIDATION_ERROR',
+        [
+          {
+            field: 'id',
+            message: 'El identificador debe ser un número entero positivo',
+          },
+        ],
+      );
+    }
 
-  const datosActualizados: Partial<TurnoCrudo> = req.body;
-  if (datosActualizados.medicoId !== undefined) {
-  const medico = medicosService.obtenerPorId(datosActualizados.medicoId);
+    const turnoExistente = turnosService.obtenerPorId(id);
 
-  if (!medico) {
-    next(
-      new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', [
-        {
-          field: 'medicoId',
-          message: 'No existe un médico con el ID indicado',
-        },
-      ]),
-    );
-    return;
-  }
-}
-  const turno = turnosService.actualizarTurno(id, datosActualizados);
+    if (!turnoExistente) {
+      status = 404;
 
-  if (!turno) {
-    next(
-      new AppError(
-        400,
+      throw new AppError(
+        status,
+        'Turno no encontrado',
+        'RESOURCE_NOT_FOUND',
+        [],
+      );
+    }
+
+    const datos = req.body;
+
+    const turno = turnosService.actualizarTurno(id, datos);
+
+    if (!turno) {
+      status = 400;
+
+      throw new AppError(
+        status,
         'No se pudo actualizar el turno. Los datos son inválidos',
         'VALIDATION_ERROR',
         [],
-      ),
-    );
-    return;
-  }
+      );
+    }
 
-  res.status(200).json(turno);
+    return void res.status(status).json(turno);
+  } catch (error) {
+    next(error);
+  }
 }
 
-export function eliminarTurno(
+export async function eliminarTurno(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const id = Number(req.params.id);
+): Promise<void> {
+  let status = 204;
 
-  if (!Number.isInteger(id) || id <= 0) {
-    next(
-      new AppError(400, 'ID inválido', 'VALIDATION_ERROR', [
-        {
-          field: 'id',
-          message: 'El identificador debe ser un número entero positivo',
-        },
-      ]),
-    );
-    return;
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'ID inválido',
+        'VALIDATION_ERROR',
+        [
+          {
+            field: 'id',
+            message: 'El identificador debe ser un número entero positivo',
+          },
+        ],
+      );
+    }
+
+    const turnoExistente = turnosService.obtenerPorId(id);
+
+    if (!turnoExistente) {
+      status = 404;
+
+      throw new AppError(
+        status,
+        'Turno no encontrado',
+        'RESOURCE_NOT_FOUND',
+        [],
+      );
+    }
+
+    const eliminado = turnosService.eliminarTurno(id);
+
+    if (!eliminado) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'No se pudo eliminar el turno',
+        'VALIDATION_ERROR',
+        [],
+      );
+    }
+
+    return void res.status(status).send();
+  } catch (error) {
+    next(error);
   }
-
-  const eliminado = turnosService.eliminarTurno(id);
-
-  if (!eliminado) {
-    next(
-      new AppError(404, 'Turno no encontrado', 'RESOURCE_NOT_FOUND', []),
-    );
-    return;
-  }
-
-  res.status(204).send();
 }

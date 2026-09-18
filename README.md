@@ -2,24 +2,40 @@
 
 ## Descripción
 
-TurnosRed es un backend especializado en la gestión centralizada de turnos médicos para centros de atención ambulatoria. La aplicación procesa datos heterogéneos de múltiples sedes (clínica médica, pediatría, odontología y nutrición) y proporciona una API REST con comunicación en tiempo real mediante WebSockets.
+TurnosRed es un backend especializado en la gestión centralizada de turnos médicos para centros de atención ambulatoria.
 
-**Características principales:**
-- ✅ API REST con 5 endpoints CRUD para turnos
-- ✅ Normalización y validación automática de datos
-- ✅ Bus de eventos internos con EventEmitter
-- ✅ Comunicación en tiempo real con Socket.IO
-- ✅ Arquitectura de capas (routes, controllers, services, models)
-- ✅ TypeScript con tipado estricto
+La aplicación procesa datos de turnos y médicos y proporciona una API REST con comunicación en tiempo real mediante WebSockets.
+
+## Características principales
+
+- API REST con operaciones CRUD para turnos.
+- CRUD completo del recurso médicos.
+- Normalización y validación de datos.
+- Validaciones de entrada mediante Zod.
+- Manejo centralizado y estandarizado de errores.
+- Bus de eventos internos con EventEmitter.
+- Comunicación en tiempo real mediante Socket.IO.
+- Arquitectura por capas:
+  - routes
+  - controllers
+  - services
+  - models
+  - schemas
+  - middlewares
+  - errors
+- Controllers separados por recurso.
+- Controller general para Hello World y rutas inexistentes.
+- TypeScript con tipado estricto.
 
 ---
 
 ## Requisitos previos
 
-- **Node.js** (versión LTS) — [Descargar](https://nodejs.org/)
-- **NVM** (recomendado para gestionar versiones) — [Instalar](https://github.com/nvm-sh/nvm)
-- **npm** (incluido con Node.js)
-- **Git** — [Descargar](https://git-scm.com/)
+- **Node.js** versión LTS.
+- **NPM**, incluido con Node.js.
+- **Git**.
+- **NVM** (opcional, recomendado para gestionar versiones de Node.js).
+- **Postman** para realizar las pruebas de la API.
 
 ---
 
@@ -30,77 +46,251 @@ TurnosRed es un backend especializado en la gestión centralizada de turnos méd
 ```bash
 git clone <URL-DEL-REPOSITORIO>
 cd turnos-red
+```
 
 ### 2. Instalar dependencias
 
 ```bash
 npm install
-3. Configurar variables de entorno
-Copia .env.example a .env:
+```
 
-cp .env.example .env
-Variables de entorno
-Variable	Descripción	Valor por defecto
-PORT	Puerto en el que corre el servidor	3000
-DATA_FILE_PATH	Ruta del archivo JSON con datos de turnos	./data/turnos.json
-Scripts npm
-# Compilar TypeScript
+### 3. Configurar variables de entorno
+
+Copiar `.env.example` como `.env`.
+
+Variables utilizadas:
+
+| Variable | Descripción | Valor por defecto |
+|---|---|---|
+| `PORT` | Puerto en el que corre el servidor | `3000` |
+| `DATA_FILE_PATH` | Ruta del archivo JSON con datos de turnos | `./data/turnos.json` |
+
+## Scripts disponibles
+
+### Compilar TypeScript
+
+```bash
 npm run build
+```
 
-# Ejecutar en modo desarrollo (compila y ejecuta)
+### Ejecutar en desarrollo
+
+```bash
 npm run dev
+```
 
-# Ejecutar código compilado
+Este comando compila TypeScript y ejecuta la aplicación.
+
+### Ejecutar código compilado
+
+```bash
 npm start
+```
 
-# Linter (verifica código)
+### Ejecutar ESLint
+
+```bash
 npm run lint
+```
 
-# Formatear código
+### Formatear el proyecto
+
+```bash
 npm run format
-Estructura de carpetas
+```
+
+## Estructura del proyecto
+
+```text
 turnos-red/
 ├── src/
-│   ├── controllers/         # Controladores (manejo de solicitudes HTTP)
+│   ├── controllers/
+│   │   ├── general.controller.ts
+│   │   ├── medicos.controller.ts
 │   │   └── turnos.controller.ts
-│   ├── models/              # Modelos de datos e interfaces
-│   │   └── turnos.models.ts
-│   ├── routes/              # Definición de rutas
-│   │   └── turnos.routes.ts
-│   ├── services/            # Lógica de negocio
-│   │   └── turnos.services.ts
-│   ├── events/              # Bus de eventos y Socket.IO
+│   │
+│   ├── errors/
+│   │   └── app.error.ts
+│   │
+│   ├── events/
 │   │   ├── turno.emitter.ts
 │   │   └── socket.ts
-│   └── index.ts             # Punto de entrada
+│   │
+│   ├── middlewares/
+│   │   ├── error.handler.ts
+│   │   └── validate.ts
+│   │
+│   ├── models/
+│   │   ├── medicos.models.ts
+│   │   └── turnos.models.ts
+│   │
+│   ├── routes/
+│   │   ├── general.routes.ts
+│   │   ├── medicos.routes.ts
+│   │   └── turnos.routes.ts
+│   │
+│   ├── schemas/
+│   │   ├── medicos.schema.ts
+│   │   └── turnos.schema.ts
+│   │
+│   ├── services/
+│   │   ├── medicos.service.ts
+│   │   └── turnos.services.ts
+│   │
+│   ├── ejemploCallbacks.ts
+│   ├── index.ts
+│   └── normalizador.ts
+│
 ├── data/
-│   └── turnos.json          # Archivo con datos crudos de turnos
-├── dist/                    # Código compilado (generado por TypeScript)
-├── .env.example             # Variables de entorno (ejemplo)
-├── .gitignore               # Archivos ignorados por Git
-├── package.json             # Dependencias del proyecto
-├── package-lock.json        # Lock file de npm
-├── tsconfig.json            # Configuración de TypeScript
-├── .nvmrc                   # Versión de Node.js
-└── README.md                # Este archivo
-Cómo ejecutar
-Modo desarrollo
+│   └── turnos.json
+│
+├── dist/
+├── .env.example
+├── .gitignore
+├── .nvmrc
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+└── README.md
+```
+
+
+## Ejecución
+
+Para iniciar el servidor en modo desarrollo:
+
+```bash
 npm run dev
-El servidor se levantará en http://localhost:3000 (o el puerto especificado en .env).
+```
+
+El servidor se ejecuta por defecto en:
+
+http://localhost:3000
+
+En consola se informa el inicio del servidor y la cantidad de turnos aceptados y rechazados durante la inicialización.
 
 Verás en consola:
 
+```text
 🚀 Servidor corriendo en puerto 3000
 ✅ Turnos aceptados: X | ❌ Turnos rechazados: Y
-Modo producción
+```
+
+### Modo producción
+
+```bash
 npm run build
 npm start
-Endpoints REST
-GET /turnos
-Obtiene todos los turnos.
+```
 
-Respuesta (200 OK):
+# Refactorización de Controllers - Trabajo 3
 
+Como parte de la Actividad 2 se realizó una refactorización de la API para separar la lógica de manejo de las solicitudes HTTP mediante Controllers.
+
+La estructura de Controllers quedó organizada de la siguiente manera:
+
+```text
+src/controllers/
+├── general.controller.ts
+├── medicos.controller.ts
+└── turnos.controller.ts
+```
+
+## Controller General
+
+El Controller General se encarga de:
+
+- Gestionar el endpoint `GET /` para responder `Hello World`.
+- Gestionar las rutas inexistentes mediante una respuesta `404`.
+
+## Controllers de recursos
+
+Se utilizaron Controllers independientes para los recursos:
+
+- `medicos.controller.ts`
+- `turnos.controller.ts`
+
+Cada método exportado de los Controllers fue declarado como función `async`.
+
+Además, se incorporaron las siguientes características:
+
+- Variable `status` para definir el código HTTP de respuesta.
+- Validaciones antes de realizar las operaciones.
+- Manejo de errores mediante `try-catch`.
+- Uso de `AppError` para estandarizar los errores.
+- Retorno explícito de las respuestas HTTP.
+- Separación entre rutas, controllers y services.
+
+La lógica de negocio continúa siendo responsabilidad de los Services, mientras que los Controllers gestionan las solicitudes y respuestas HTTP.
+
+## Manejo centralizado de errores
+
+Los errores son enviados al middleware centralizado `errorHandler`, que devuelve respuestas con una estructura uniforme:
+
+```json
+{
+  "status": 400,
+  "message": "Error de validación en los datos ingresados",
+  "code": "VALIDATION_ERROR",
+  "details": []
+}
+```
+
+Los principales códigos utilizados son:
+
+- `200` — Operación exitosa.
+- `201` — Recurso creado.
+- `204` — Operación exitosa sin contenido.
+- `400` — Error de validación.
+- `404` — Recurso o ruta no encontrada.
+- `500` — Error interno del servidor.
+
+# Endpoints REST
+
+## Controller General
+
+### GET `/`
+
+Endpoint de bienvenida de la API.
+
+Respuesta:
+
+```json
+{
+  "message": "Hello World"
+}
+```
+
+### Ruta inexistente
+
+Cualquier ruta que no esté contemplada por la aplicación es gestionada por el Controller General.
+
+Ejemplo:
+
+```http
+GET /pepito
+```
+
+Respuesta:
+
+```json
+{
+  "status": 404,
+  "message": "Ruta no encontrada",
+  "code": "ROUTE_NOT_FOUND",
+  "details": []
+}
+```
+
+## Recurso Turnos
+
+### GET `/turnos`
+
+Obtiene todos los turnos registrados.
+
+Respuesta:
+
+```json
 [
   {
     "id": 102,
@@ -108,328 +298,289 @@ Respuesta (200 OK):
     "documento": "31654210",
     "especialidad": "Pediatría",
     "fecha": "14/08/2026",
-    "hora": "10.00",
-    "confirmado": true
+    "hora": "10:00",
+    "confirmado": true,
+    "medicoId": 1
+  },
+  {
+    "id": 103,
+    "paciente": "María López",
+    "documento": "40123456",
+    "especialidad": "Odontología",
+    "fecha": "15/08/2026",
+    "hora": "14:30",
+    "confirmado": false,
+    "medicoId": 2
   }
 ]
-GET /turnos/:id
-Obtiene un turno por ID.
+```
 
-Respuesta (200 OK):
+### GET `/turnos/:id`
 
-{
-  "id": 102,
-  "paciente": "Carlos Ruiz",
-  "documento": "31654210",
-  "especialidad": "Pediatría",
-  "fecha": "14/08/2026",
-  "hora": "10.00",
-  "confirmado": true
-}
-POST /turnos
+Obtiene un turno mediante su identificador.
+
+Ejemplo:
+
+```http
+GET /turnos/102
+```
+
+Si el turno existe, responde:
+
+```text
+200 OK
+```
+
+Si el identificador no existe, responde:
+
+```text
+404 Not Found
+```
+
+### POST `/turnos`
+
 Crea un nuevo turno.
 
-Body (JSON):
+Ejemplo:
 
-{
-  "id": "104",
-  "paciente": "Juan Pérez",
-  "documento": 25987654,
-  "especialidad": "CLÍNICA MÉDICA",
-  "fecha": "20/08/2026",
-  "hora": "09:15",
-  "confirmado": "si"
-}
-Respuesta (201 Created):
+```http
+POST /turnos
+```
 
+Body:
+
+```json
 {
   "id": 104,
-  "paciente": "Juan Pérez",
-  "documento": "25987654",
-  "especialidad": "Clínica Médica",
-  "fecha": "20/08/2026",
-  "hora": "09:15",
-  "confirmado": true
+  "paciente": "Pedro González",
+  "documento": "35123456",
+  "especialidad": "Nutrición",
+  "fecha": "16/08/2026",
+  "hora": "16:00",
+  "confirmado": false,
+  "medicoId": 1
 }
-PUT /turnos/:id
+```
+
+Si los datos son válidos, responde:
+
+```text
+201 Created
+```
+
+Si los datos enviados son incompletos o inválidos, responde:
+
+```text
+400 Bad Request
+```
+
+### PUT `/turnos/:id`
+
 Actualiza un turno existente.
 
-Respuesta (200 OK): Turno actualizado
+Ejemplo:
 
-DELETE /turnos/:id
-Elimina un turno.
+```http
+PUT /turnos/104
+```
 
-Respuesta (204 No Content)
+Body:
 
-Eventos en tiempo real (Socket.IO)
-Cuando ocurren operaciones CRUD, se emiten eventos en tiempo real a los clientes conectados:
-
-turno:creado — Se emite cuando se crea un turno
-turno:actualizado — Se emite cuando se actualiza un turno
-turno:eliminado — Se emite cuando se elimina un turno
-Ejemplo de conexión (cliente):
-
-const socket = io('http://localhost:3000');
-
-socket.on('turno:creado', (turno) => {
-  console.log('Nuevo turno:', turno);
-});
-
-socket.on('turno:actualizado', (turno) => {
-  console.log('Turno actualizado:', turno);
-});
-
-socket.on('turno:eliminado', (id) => {
-  console.log('Turno eliminado:', id);
-});
-Normalización de datos
-Los datos crudos del archivo turnos.json se normalizan automáticamente:
-
-Campo	Transformación
-id	String → Number (entero positivo)
-documento	Number → String
-especialidad	Mayúsculas → Title Case
-confirmado	"si"/"no" → true/false
-paciente	Se eliminan espacios extras
-Tecnologías utilizadas
-Node.js — Runtime de JavaScript
-Express — Framework web
-TypeScript — Tipado estricto
-Socket.IO — Comunicación en tiempo real
-EventEmitter — Patrón de eventos
-Autor
-TurnosRed - Proyecto académico de Teclab Integraciones Web
-
-Licencia
-ISC
-
-
----
-
-**Ahora copia TODO esto y agrégalo a tu `README.md`** (después de la sección de Instalación que ya copiaste).
-
-¿Lo hiciste? 🔹
-
-#Actividad 2 - Mejoras implementadas#
-
-Arquitectura y manejo de errores
-
-La API utiliza un middleware centralizado para responder errores con un formato uniforme:
-
+```json
 {
-  "status": 400,
-  "message": "Error de validación en los datos ingresados",
-  "code": "VALIDATION_ERROR",
-  "details": []
+  "paciente": "Pedro González",
+  "documento": "35123456",
+  "especialidad": "Nutrición",
+  "fecha": "16/08/2026",
+  "hora": "17:00",
+  "confirmado": true,
+  "medicoId": 1
 }
+```
 
-Los códigos principales utilizados son 200, 201, 204, 400, 404 y 500.
+Si el turno existe y los datos son válidos, responde:
 
-Recurso Médicos
+```text
+200 OK
+```
 
-Método
+Si el identificador no existe, responde:
 
-Endpoint
+```text
+404 Not Found
+```
 
-Descripción
+Si los datos enviados son inválidos, responde:
 
-GET
+```text
+400 Bad Request
+```
 
-/medicos
 
-Lista médicos
+### DELETE `/turnos/:id`
 
-GET
+Elimina un turno existente.
 
-/medicos/:id
+Ejemplo:
 
-Obtiene un médico
+```http
+DELETE /turnos/104
+```
 
-POST
+Si el turno existe y se elimina correctamente, responde:
 
-/medicos
+```text
+204 No Content
+```
 
-Crea un médico
+Si el identificador no existe, responde:
 
-PUT
+```text
+404 Not Found
+```
 
-/medicos/:id
+## Recurso Médicos
 
-Actualiza un médico
+### GET `/medicos`
 
-DELETE
+Obtiene todos los médicos registrados.
 
-/medicos/:id
+Respuesta:
 
-Elimina un médico
-
-Validaciones con Zod
-
-Se validan los datos de Turnos y Médicos antes de llegar a los controladores. Se controla, entre otros aspectos:
-
-Documento como texto.
-
-Especialidades válidas: Clínica Médica, Pediatría, Odontología y Nutrición.
-
-Fechas con formato DD/MM/AAAA.
-
-Horas con formato HH:MM.
-
-IDs positivos.
-
-Datos obligatorios y actualizaciones vacías.
-
-Existencia del médico indicado mediante medicoId.
-
-Filtros disponibles
-
-Recurso
-
-Ejemplo
-
-Turnos por especialidad
-
-/turnos?especialidad=Pediatria
-
-Turnos por fecha
-
-/turnos?fecha=14/08/2026
-
-Turnos por médico
-
-/turnos?medicoId=2
-
-Médicos por especialidad
-
-/medicos?especialidad=Pediatria
-
-Médicos disponibles
-
-/medicos?disponible=true
-
-Pruebas con Postman
-
-La colección exportada se encuentra en:
-
-turnos-red.postman_collection.json
-
-Incluye variables para baseUrl, IDs dinámicos y URL del Mock Server; pruebas automáticas para respuestas 200, 201, 204, 400 y 404; y ejemplos guardados para el Mock Server.
-
-Uso de Inteligencia Artificial
-
-Tarea
-
-Herramienta
-
-Prompt o consulta
-
-Resultado utilizado
-
-Ajuste manual aplicado
-
-Middleware de errores
-
-Codex
-
-Consultas sobre errores estandarizados en Express
-
-Clase AppError y middleware de errores
-
-Se adaptaron nombres de archivos y formato solicitado
-
-CRUD de Médicos
-
-Codex
-
-Consulta sobre estructura por capas
-
-Modelos, rutas, servicios y controladores
-
-Se revisó la integración con Turnos
-
-Validaciones
-
-Codex
-
-Consulta sobre esquemas Zod
-
-Esquemas para Turnos y Médicos
-
-Se ajustaron especialidades, formatos e IDs
-
-Filtros
-
-Codex
-
-Consulta sobre query parameters
-
-Filtros por especialidad, fecha, médico y disponibilidad
-
-Se probaron manualmente en Postman
-
-Pruebas y Mock Server
-
-Codex
-
-Consulta sobre tests y ejemplos de Postman
-
-Scripts de tests y Mock Server
-
-Se verificaron respuestas y capturas manualmente
-
-##La IA ChatGPT/Mentor Virtual "Cris", se utilizó como apoyo para comprender, diseñar y revisar el código. La integración, ejecución de pruebas POSTMAN y verificación final fueron realizadas manualmente.
-
-##Prompt utilizado: Le envie el codigo actual de Por ejemplo: "src/index.ts" para que me diga que esta bien segun la consigna, y me devolvio el siguiente codigo:
-import express from 'express';
-import http from 'http';
-import turnosRoutes from './routes/turnos.routes.js';
-import * as turnosService from './services/turnos.services.js';
-import { inicializarSocket } from './events/socket.js';
-import { errorHandler } from './middlewares/error.handler.js';
-import { AppError } from './errors/app.error.js';
-import medicosRoutes from './routes/medicos.routes.js';
-
-const app = express();
-const httpServer = http.createServer(app);
-const puerto = process.env.PORT || 3000;
-
-// Middlewares
-app.use(express.json());
-
-// Rutas
-app.use('/turnos', turnosRoutes);
-app.use('/medicos', medicosRoutes);
-
-// Ruta de respaldo
-app.use((_req, _res, next) => {
-  next(
-    new AppError(
-      404,
-      'Ruta no encontrada',
-      'ROUTE_NOT_FOUND',
-      [],
-    ),
-  );
-});
-
-// Middleware centralizado de errores
-app.use(errorHandler);
-
-// Inicializar Socket.IO
-inicializarSocket(httpServer);
-
-// Iniciar servidor HTTP
-httpServer.listen(puerto, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${puerto}`);
-});
-
-// Cargar datos de turnos al iniciar
-async function iniciar() {
-  try {
-    await turnosService.inicializarTurnos();
-  } catch (error) {
-    console.error('Error al cargar turnos:', error);
+```json
+[
+  {
+    "id": 1,
+    "nombre": "Dra. Laura Gómez",
+    "documento": "30111222",
+    "especialidad": "Clínica Médica",
+    "disponible": true
+  },
+  {
+    "id": 2,
+    "nombre": "Dr. Martín Pérez",
+    "documento": "32444555",
+    "especialidad": "Pediatría",
+    "disponible": true
   }
-}
+]
+```
 
-iniciar();
+  ### GET `/medicos/:id`
+
+Obtiene un médico mediante su identificador.
+
+Ejemplo:
+
+```http
+GET /medicos/1
+```
+
+Si el médico existe, responde:
+
+```text
+200 OK
+```
+
+Si el identificador no existe, responde:
+
+```text
+404 Not Found
+```
+
+
+
+
+### POST `/medicos`
+
+Crea un nuevo médico.
+
+Ejemplo:
+
+```http
+POST /medicos
+```
+
+Body:
+
+```json
+{
+  "nombre": "Dr. Juan Rodríguez",
+  "documento": "33777888",
+  "especialidad": "Pediatría",
+  "disponible": true
+}
+```
+
+Si los datos son válidos, responde:
+
+```text
+201 Created
+```
+
+Si los datos enviados son incompletos o inválidos, responde:
+
+```text
+400 Bad Request
+```
+
+### PUT `/medicos/:id`
+
+Actualiza un médico existente.
+
+Ejemplo:
+
+```http
+PUT /medicos/3
+```
+
+Body:
+
+```json
+{
+  "nombre": "Dr. Juan Rodríguez",
+  "documento": "33777888",
+  "especialidad": "Pediatría",
+  "disponible": false
+}
+```
+
+Si el médico existe y los datos son válidos, responde:
+
+```text
+200 OK
+```
+
+Si el identificador no existe, responde:
+
+```text
+404 Not Found
+```
+
+Si los datos enviados son inválidos, responde:
+
+```text
+400 Bad Request
+```
+
+### DELETE `/medicos/:id`
+
+Elimina un médico existente.
+
+Ejemplo:
+
+```http
+DELETE /medicos/3
+```
+
+Si el médico existe y se elimina correctamente, responde:
+
+```text
+204 No Content
+```
+
+Si el identificador no existe, responde:
+
+```text
+404 Not Found
+```

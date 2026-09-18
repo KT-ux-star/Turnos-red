@@ -3,137 +3,239 @@ import { AppError } from '../errors/app.error.js';
 import type { Medico } from '../models/medicos.models.js';
 import * as medicosService from '../services/medicos.service.js';
 
-export function obtenerTodos(
+export async function obtenerTodos(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const { especialidad, disponible } = req.query;
+): Promise<void> {
+  let status = 200;
 
-  let disponibleBooleano: boolean | undefined;
+  try {
+    const { especialidad, disponible } = req.query;
 
-  if (disponible !== undefined) {
-    if (disponible !== 'true' && disponible !== 'false') {
-      next(
-        new AppError(400, 'disponible inválido', 'VALIDATION_ERROR', [
-          {
-            field: 'disponible',
-            message: 'Debe ser true o false',
-          },
-        ]),
-      );
-      return;
+    let disponibleBooleano: boolean | undefined;
+    
+
+    if (disponible !== undefined) {
+      if (disponible !== 'true' && disponible !== 'false') {
+        status = 400;
+
+        throw new AppError(
+          status,
+          'disponible inválido',
+          'VALIDATION_ERROR',
+          [
+            {
+              field: 'disponible',
+              message: 'Debe ser true o false',
+            },
+          ],
+        );
+      }
+
+      disponibleBooleano = disponible === 'true';
     }
 
-    disponibleBooleano = disponible === 'true';
+    const medicos = medicosService.obtenerTodos({
+      especialidad:
+        typeof especialidad === 'string' ? especialidad : undefined,
+      disponible: disponibleBooleano,
+    });
+
+    return void res.status(status).json(medicos);
+  } catch (error) {
+    next(error);
   }
-
-  const medicos = medicosService.obtenerTodos({
-    especialidad:
-      typeof especialidad === 'string' ? especialidad : undefined,
-    disponible: disponibleBooleano,
-  });
-
-  res.status(200).json(medicos);
 }
 
-export function obtenerPorId(
+export async function obtenerPorId(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const id = Number(req.params.id);
+): Promise<void> {
+  let status = 200;
 
-  if (!Number.isInteger(id) || id <= 0) {
-    next(
-      new AppError(400, 'ID inválido', 'VALIDATION_ERROR', [
-        {
-          field: 'id',
-          message: 'El identificador debe ser un número entero positivo',
-        },
-      ]),
-    );
-    return;
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'ID inválido',
+        'VALIDATION_ERROR',
+        [
+          {
+            field: 'id',
+            message: 'El identificador debe ser un número entero positivo',
+          },
+        ],
+      );
+    }
+
+    const medico = medicosService.obtenerPorId(id);
+
+    if (!medico) {
+      status = 404;
+
+      throw new AppError(
+        status,
+        'Médico no encontrado',
+        'RESOURCE_NOT_FOUND',
+        [],
+      );
+    }
+
+    return void res.status(status).json(medico);
+  } catch (error) {
+    next(error);
   }
-
-  const medico = medicosService.obtenerPorId(id);
-
-  if (!medico) {
-    next(
-      new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', []),
-    );
-    return;
-  }
-
-  res.status(200).json(medico);
 }
 
-export function crearMedico(req: Request, res: Response): void {
-  const datos: Omit<Medico, 'id'> = req.body;
-  const medico = medicosService.crearMedico(datos);
-
-  res.status(201).json(medico);
-}
-
-export function actualizarMedico(
+export async function crearMedico(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const id = Number(req.params.id);
+): Promise<void> {
+  let status = 201;
 
-  if (!Number.isInteger(id) || id <= 0) {
-    next(
-      new AppError(400, 'ID inválido', 'VALIDATION_ERROR', [
-        {
-          field: 'id',
-          message: 'El identificador debe ser un número entero positivo',
-        },
-      ]),
-    );
-    return;
+  try {
+    const datos: Omit<Medico, 'id'> = req.body;
+
+    const medico = medicosService.crearMedico(datos);
+
+    if (!medico) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'No se pudo crear el médico. Los datos son inválidos',
+        'VALIDATION_ERROR',
+        [],
+      );
+    }
+
+    return void res.status(status).json(medico);
+  } catch (error) {
+    next(error);
   }
-
-  const datos: Partial<Omit<Medico, 'id'>> = req.body;
-  const medico = medicosService.actualizarMedico(id, datos);
-
-  if (!medico) {
-    next(
-      new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', []),
-    );
-    return;
-  }
-
-  res.status(200).json(medico);
 }
 
-export function eliminarMedico(
+export async function actualizarMedico(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const id = Number(req.params.id);
+): Promise<void> {
+  let status = 200;
 
-  if (!Number.isInteger(id) || id <= 0) {
-    next(
-      new AppError(400, 'ID inválido', 'VALIDATION_ERROR', [
-        {
-          field: 'id',
-          message: 'El identificador debe ser un número entero positivo',
-        },
-      ]),
-    );
-    return;
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'ID inválido',
+        'VALIDATION_ERROR',
+        [
+          {
+            field: 'id',
+            message: 'El identificador debe ser un número entero positivo',
+          },
+        ],
+      );
+    }
+
+    const medicoExistente = medicosService.obtenerPorId(id);
+
+    if (!medicoExistente) {
+      status = 404;
+
+      throw new AppError(
+        status,
+        'Médico no encontrado',
+        'RESOURCE_NOT_FOUND',
+        [],
+      );
+    }
+
+    const datos: Partial<Omit<Medico, 'id'>> = req.body;
+
+    const medico = medicosService.actualizarMedico(id, datos);
+
+    if (!medico) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'No se pudo actualizar el médico. Los datos son inválidos',
+        'VALIDATION_ERROR',
+        [],
+      );
+    }
+
+    return void res.status(status).json(medico);
+  } catch (error) {
+    next(error);
   }
+}
 
-  const eliminado = medicosService.eliminarMedico(id);
+export async function eliminarMedico(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  let status = 204;
 
-  if (!eliminado) {
-    next(
-      new AppError(404, 'Médico no encontrado', 'RESOURCE_NOT_FOUND', []),
-    );
-    return;
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'ID inválido',
+        'VALIDATION_ERROR',
+        [
+          {
+            field: 'id',
+            message: 'El identificador debe ser un número entero positivo',
+          },
+        ],
+      );
+    }
+
+    const medicoExistente = medicosService.obtenerPorId(id);
+
+    if (!medicoExistente) {
+      status = 404;
+
+      throw new AppError(
+        status,
+        'Médico no encontrado',
+        'RESOURCE_NOT_FOUND',
+        [],
+      );
+    }
+
+    const eliminado = medicosService.eliminarMedico(id);
+
+    if (!eliminado) {
+      status = 400;
+
+      throw new AppError(
+        status,
+        'No se pudo eliminar el médico',
+        'VALIDATION_ERROR',
+        [],
+      );
+    }
+
+    return void res.status(status).send();
+  } catch (error) {
+    next(error); 
   }
-
-  res.status(204).send();
 }

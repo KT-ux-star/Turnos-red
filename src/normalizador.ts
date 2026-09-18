@@ -65,7 +65,7 @@ export function normalizarTurno(turnoCrudo: TurnoCrudo): Turno | null {
       hora,
       confirmado,
     };
-  } catch (error) {
+  } catch {
     // Si algo falla, retorna null para descartar este registro
     return null;
   }

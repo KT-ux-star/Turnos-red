@@ -11,6 +11,8 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ): void {
+  void _next;
+
   if (error instanceof AppError) {
     res.status(error.status).json({
       status: error.status,

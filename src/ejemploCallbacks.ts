@@ -8,7 +8,7 @@ import fs from 'node:fs';
  * - Los errores se manejan de forma inconsistente
  * - Es fácil perder el contexto
  */
-function leerTurnosConCallback() {
+export function leerTurnosConCallback() {
   fs.readFile('./data/turnos.json', 'utf-8', (error, contenido) => {
     if (error) {
       console.error('Error al leer el archivo:', error);
@@ -32,7 +32,7 @@ function leerTurnosConCallback() {
  * - Los errores se manejan en un único try/catch
  * - Es más fácil de mantener y depurar
  */
-async function leerTurnosConAsyncAwait() {
+ export async function leerTurnosConAsyncAwait() {
   try {
     const contenido = await fs.promises.readFile('./data/turnos.json', 'utf-8');
     const turnos = JSON.parse(contenido);
